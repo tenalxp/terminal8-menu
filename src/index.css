@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f7f2e4;
+  --surface: #ffffff;
+  --surface-2: #efe8d4;
+  --border: #e6dcc0;
+  --border-strong: #d6c8a3;
+  --text: #182b4a;
+  --text-muted: #5f6f88;
+  --accent: #1a3a5f;
+  --accent-hover: #12283f;
+  --accent-soft: #dce6f0;
+  --on-accent: #ffffff;
+  --danger: #c0362c;
+  --danger-soft: #fbe2df;
+  --shadow-sm: 0 1px 2px rgba(40, 32, 12, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --shadow-md: 0 8px 20px -6px rgba(40, 32, 12, 0.14), 0 2px 6px -2px rgba(40, 32, 12, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1a2e;
+    --surface: #17263f;
+    --surface-2: #1d2f4d;
+    --border: #2a3b58;
+    --border-strong: #35496b;
+    --text: #eef2f7;
+    --text-muted: #9db0c7;
+    --accent: #e3a94c;
+    --accent-hover: #f0bb64;
+    --accent-soft: rgba(227, 169, 76, 0.16);
+    --on-accent: #17263f;
+    --danger: #e2695f;
+    --danger-soft: rgba(226, 105, 95, 0.16);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    --shadow-md: 0 8px 20px -6px rgba(0, 0, 0, 0.45), 0 2px 6px -2px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Outfit", "Noto Sans Thai", system-ui, sans-serif;
+  font-feature-settings: "tnum" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.card-enter {
+  opacity: 0;
+  animation: card-enter-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--enter-delay, 0s);
+}
+
+@keyframes card-enter-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: var(--end-opacity, 1);
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-enter {
+    animation: none;
+    opacity: var(--end-opacity, 1);
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
