@@ -201,9 +201,11 @@ export default function App() {
               <h2 className="text-[17px] font-bold" style={{ color: 'var(--text)' }}>
                 {category}
               </h2>
-              {filteredByCategory.get(category).map((item, index) => (
-                <MenuItemCard key={item.id} item={item} index={index} />
-              ))}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {filteredByCategory.get(category).map((item, index) => (
+                  <MenuItemCard key={item.id} item={item} index={index} />
+                ))}
+              </div>
             </section>
           ))}
       </main>
