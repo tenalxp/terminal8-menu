@@ -18,9 +18,8 @@ create table if not exists menu_items (
 create index if not exists idx_menu_items_category on menu_items(category);
 
 -- Enable Row Level Security - anyone can read the menu (it's a public,
--- customer-facing page reached by scanning a QR code), but nobody can
--- write to it through the app. The owner manages rows via the Supabase
--- Dashboard, which uses the privileged service role and bypasses RLS.
+-- customer-facing page reached by scanning a QR code). Writes are gated
+-- to the logged-in admin (the /admin page), managed via Supabase Auth.
 alter table menu_items enable row level security;
 
 drop policy if exists "public read menu_items" on menu_items;
@@ -28,16 +27,35 @@ create policy "public read menu_items" on menu_items
   for select to anon
   using (true);
 
+drop policy if exists "authenticated_all_menu_items" on menu_items;
+create policy "authenticated_all_menu_items" on menu_items
+  for all to authenticated using (true) with check (true);
+
 -- Storage bucket for item photos (public read so <img> tags can load them
--- directly). Upload photos here via Dashboard -> Storage -> menu-photos,
--- then paste the resulting public URL into a row's image_url column.
+-- directly; write access gated to the logged-in admin).
 insert into storage.buckets (id, name, public)
 values ('menu-photos', 'menu-photos', true)
 on conflict (id) do nothing;
 
 drop policy if exists "menu_photos_public_read" on storage.objects;
+drop policy if exists "menu_photos_authenticated_write" on storage.objects;
+drop policy if exists "menu_photos_authenticated_update" on storage.objects;
+drop policy if exists "menu_photos_authenticated_delete" on storage.objects;
+
 create policy "menu_photos_public_read" on storage.objects
   for select to public
+  using (bucket_id = 'menu-photos');
+
+create policy "menu_photos_authenticated_write" on storage.objects
+  for insert to authenticated
+  with check (bucket_id = 'menu-photos');
+
+create policy "menu_photos_authenticated_update" on storage.objects
+  for update to authenticated
+  using (bucket_id = 'menu-photos');
+
+create policy "menu_photos_authenticated_delete" on storage.objects
+  for delete to authenticated
   using (bucket_id = 'menu-photos');
 
 -- Sample rows for local testing - safe to delete once you add real items.
