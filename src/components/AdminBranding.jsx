@@ -23,8 +23,15 @@ export default function AdminBranding({ logoUrl, onChange }) {
     setSaving(true)
     setError('')
     try {
-      const { error: err } = await supabase.from('app_settings').update({ logo_url: url }).eq('id', 1)
+      const { data, error: err } = await supabase
+        .from('app_settings')
+        .update({ logo_url: url })
+        .eq('id', 1)
+        .select()
       if (err) throw err
+      if (!data || data.length === 0) {
+        throw new Error('Save did not apply (no matching row) - check the app_settings RLS policy')
+      }
       onChange(url)
     } catch (err) {
       setError(err.message || 'Failed to save')
