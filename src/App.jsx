@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowClockwise, WarningCircle } from '@phosphor-icons/react'
 import { supabase } from './lib/supabase'
+import { fetchLogoUrl } from './lib/appSettings'
 import SearchBar from './components/SearchBar'
 import CategoryTabs from './components/CategoryTabs'
 import MenuItemCard from './components/MenuItemCard'
@@ -51,8 +52,13 @@ export default function App() {
   const { items, status, retry } = useMenuItems()
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState(null)
+  const [logoUrl, setLogoUrl] = useState(null)
   const sectionRefs = useRef({})
   const isClickScrolling = useRef(false)
+
+  useEffect(() => {
+    fetchLogoUrl().then(setLogoUrl)
+  }, [])
 
   const categories = useMemo(() => {
     const seen = new Set()
@@ -132,7 +138,8 @@ export default function App() {
 
   return (
     <div className="min-h-dvh pb-10" style={{ background: 'var(--bg)' }}>
-      <header className="px-4 pt-8 pb-4">
+      <header className="px-4 pt-8 pb-4 flex flex-col items-center text-center">
+        {logoUrl && <img src={logoUrl} alt="Terminal 8" className="h-16 w-auto object-contain mb-2" />}
         <p className="text-[12px] font-semibold tracking-[0.14em] uppercase" style={{ color: 'var(--text-muted)' }}>
           Terminal 8
         </p>

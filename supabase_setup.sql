@@ -58,6 +58,27 @@ create policy "menu_photos_authenticated_delete" on storage.objects
   for delete to authenticated
   using (bucket_id = 'menu-photos');
 
+-- Single-row settings table (site branding). id is locked to 1 so the
+-- table can only ever hold one row.
+create table if not exists app_settings (
+  id smallint primary key default 1 check (id = 1),
+  logo_url text,
+  updated_at timestamptz default now()
+);
+
+insert into app_settings (id) values (1) on conflict (id) do nothing;
+
+alter table app_settings enable row level security;
+
+drop policy if exists "public read app_settings" on app_settings;
+create policy "public read app_settings" on app_settings
+  for select to anon
+  using (true);
+
+drop policy if exists "authenticated_update_app_settings" on app_settings;
+create policy "authenticated_update_app_settings" on app_settings
+  for update to authenticated using (true) with check (true);
+
 -- Sample rows for local testing - safe to delete once you add real items.
 -- insert into menu_items (name, description, price, category, sort_order) values
 --   ('Pad Thai', 'Rice noodles, shrimp, egg, tamarind sauce, crushed peanuts', 89.00, 'Noodles', 1),

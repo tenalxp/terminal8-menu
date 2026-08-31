@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { WarningCircle } from '@phosphor-icons/react'
 import { supabase } from './lib/supabase'
+import { fetchLogoUrl } from './lib/appSettings'
 import AuthScreen from './components/AuthScreen'
 import AdminHeader from './components/AdminHeader'
+import AdminBranding from './components/AdminBranding'
 import AdminItemRow from './components/AdminItemRow'
 import MenuItemFormModal from './components/MenuItemFormModal'
 import ConfirmDialog from './components/ConfirmDialog'
@@ -59,6 +61,11 @@ function AdminDashboard({ userEmail }) {
   const [search, setSearch] = useState('')
   const [itemModal, setItemModal] = useState({ open: false, item: null })
   const [deleteTarget, setDeleteTarget] = useState(null)
+  const [logoUrl, setLogoUrl] = useState(null)
+
+  useEffect(() => {
+    fetchLogoUrl().then(setLogoUrl)
+  }, [])
 
   async function loadItems() {
     setStatus('loading')
@@ -123,7 +130,8 @@ function AdminDashboard({ userEmail }) {
         onLogout={() => supabase.auth.signOut()}
       />
 
-      <div className="px-4 pt-3">
+      <div className="px-4 pt-3 flex flex-col gap-3">
+        <AdminBranding logoUrl={logoUrl} onChange={setLogoUrl} />
         <SearchBar value={search} onChange={setSearch} />
       </div>
 
